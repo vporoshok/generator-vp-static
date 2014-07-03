@@ -1,0 +1,7 @@
+language: node_js
+node_js:
+  - '0.10'
+before_install:
+  - currentfolder=${PWD##*/}
+  - if [ "$currentfolder" != 'generator-vp-static' ]; then cd .. && eval "mv $currentfolder generator-vp-static" && cd generator-vp-static; fi
+
