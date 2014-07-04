@@ -1,7 +1,9 @@
 var gulp = require('gulp'),
     jade = require('gulp-jade'),
     less = require('gulp-less'),
+    newer = require('gulp-newer'),
     rename = require('gulp-rename'),
+    uglify = require('gulp-uglify'),
     requirejs = require('requirejs'),
     imagemin = require('gulp-imagemin'),
     connect = require('gulp-connect'),
@@ -29,7 +31,8 @@ var gulp = require('gulp'),
     dst = 'dst';
 
 gulp.task('copy-images', function() {
-    return gulp.src('./images/*')
+    return gulp.src('images/*')
+        .pipe(newer(dst + '/images'))
         .pipe(imagemin({
             progressive: true,
             svgoPlugins: [{removeViewBox: false}]
@@ -39,11 +42,17 @@ gulp.task('copy-images', function() {
 
 gulp.task('copy-vendor-js', function() {
     return gulp.src(src.bower.js)
+        .pipe(rename(function(path) {
+            path.basename += '.min'
+        }))
+        .pipe(newer(dst + '/scripts'))
+        .pipe(uglify())
         .pipe(gulp.dest(dst + '/scripts'));
 });
 
 gulp.task('copy-vendor-css', function() {
     return gulp.src(src.bower.css)
+        .pipe(newer(dst))
         .pipe(gulp.dest(dst));
 });
 
