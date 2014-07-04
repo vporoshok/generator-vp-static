@@ -8,6 +8,9 @@ html
         <% if (bootstrap) { %>
         link(rel='stylesheet', type='text/css',
             href='//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap.min.css')
+        <% } else { %>
+        link(rel='stylesheet', type='text/css',
+            href='//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.1/normalize.min.css')
         <% } %>
         - if (min)
             style(rel='stylesheet', type='text/css', href='/style.min.css')
@@ -31,9 +34,9 @@ html
 
         - if (min)
             script(type='text/javascript',
-                   src='/scripts/require.js',
+                   src='/scripts/require.min.js',
                    data-main='/scripts/script.min.js')
         - else
             script(type='text/javascript',
-                   src='/scripts/require.js',
+                   src='/scripts/require.min.js',
                    data-main='/scripts/script.js')
