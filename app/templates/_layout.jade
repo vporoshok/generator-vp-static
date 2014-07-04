@@ -5,11 +5,35 @@ html
         title
             block title
 
-        style(rel='stylesheet', type='text/css', href='/style.css')
-    body
+        <% if (bootstrap) { %>
+        link(rel='stylesheet', type='text/css',
+            href='//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap.min.css')
+        <% } %>
+        - if (min)
+            style(rel='stylesheet', type='text/css', href='/style.min.css')
+        - else
+            style(rel='stylesheet', type='text/css', href='/style.css')
+
+    body<% if (bootstrap) { %>
+        #bsCDN.hide
+        script(type='text/javascript').
+            if (document.getElementById('bsCDN').offsetWidth) {
+                var bootstrap = document.createElement('link');
+                bootstrap.setAttribute('rel', 'stylesheet');
+                bootstrap.setAttribute('type', 'text/css');
+                bootstrap.setAttribute('href', '/bootstrap.min.css');
+                var head = document.getElementsByTagName('head')[0];
+                head.insertBefore(bootstrap, head.firstChild);
+            }
+        <% } %>
         .content
             block content
 
-        script(type='text/javascript',
-               src='/scripts/require.js',
-               data-main='/scripts/script.js')
+        - if (min)
+            script(type='text/javascript',
+                   src='/scripts/require.js',
+                   data-main='/scripts/script.min.js')
+        - else
+            script(type='text/javascript',
+                   src='/scripts/require.js',
+                   data-main='/scripts/script.js')
