@@ -12,7 +12,7 @@ var gulp = require('gulp'),
     src = {
         js: 'src/**/*.js',
         jade: 'src/index.jade',
-        jade_all: 'src/**/index.jade',
+        jade_all: 'src/**/*.jade',
         less: 'src/style.less',
         less_all: 'src/**/*.less',
         bower: {
