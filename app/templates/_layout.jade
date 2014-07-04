@@ -5,6 +5,8 @@ html
         title
             block title
 
+        meta(http-equiv='X-UA-Compatible', content='IE=edge')
+        meta(name='viewport' content='width=device-width, initial-scale=1')
         <% if (bootstrap) { %>
         link(rel='stylesheet', type='text/css',
             href='//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap.min.css')
@@ -17,7 +19,7 @@ html
         - else
             style(rel='stylesheet', type='text/css', href='/style.css')
 
-    body<% if (bootstrap) { %>
+    body(lang='en')<% if (bootstrap) { %>
         #bsCDN.hide
         script(type='text/javascript').
             if (document.getElementById('bsCDN').offsetWidth) {

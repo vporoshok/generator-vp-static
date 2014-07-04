@@ -51,7 +51,7 @@ gulp.task('copy-vendor-js', function() {
 });
 
 gulp.task('copy-vendor-css', function() {
-    return gulp.src(src.bower.css)
+    return !src.bower.css.length || gulp.src(src.bower.css)
         .pipe(newer(dst))
         .pipe(gulp.dest(dst));
 });
