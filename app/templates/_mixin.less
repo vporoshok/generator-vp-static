@@ -1,15 +1,10 @@
 <% if (!bootstrap) { %>
-/*
-  Simple Grid
-  Learn More - http://dallasbass.com/simple-grid-a-lightweight-responsive-css-grid/
-  Project Page - http://thisisdallas.github.com/Simple-Grid/
-  Author - Dallas Bass
-  Site - dallasbass.com
-*/
-@col-space-md: 20px;
-@col-space-xs: 10px;
 @min-width: 755px;
 @max-width: 1140px;
+
+@col-num: 12;
+@col-sep-md: 20px;
+@col-sep-xs: 10px;
 
 .row {
     width: 100%;
@@ -23,76 +18,73 @@
         clear: both;
     }
 }
-.col-md {
-    float: left;
-    padding-right: @col-space-md;
-    box-sizing: border-box;
-    &-12 {width: 100%}
-    &-11 {width: 91.66%}
-    &-10 {width: 83.333%}
-    &-9  {width: 75%}
-    &-8  {width: 66.66%}
-    &-7  {width: 58.33%}
-    &-6  {width: 50%}
-    &-5  {width: 41.66%}
-    &-4  {width: 33.33%}
-    &-3  {width: 25%}
-    &-2  {width: 16.667%}
-    &-1  {width: 8.33%}
-}
-.col-md-offset {
-    &-12 {margin-left: 100%}
-    &-11 {margin-left: 91.66%}
-    &-10 {margin-left: 83.333%}
-    &-9  {margin-left: 75%}
-    &-8  {margin-left: 66.66%}
-    &-7  {margin-left: 58.33%}
-    &-6  {margin-left: 50%}
-    &-5  {margin-left: 41.66%}
-    &-4  {margin-left: 33.33%}
-    &-3  {margin-left: 25%}
-    &-2  {margin-left: 16.667%}
-    &-1  {margin-left: 8.33%}
-}
-
 @media handheld, only screen and (max-width: 767px) {
-    .grid {
-        width: 100%;
+    .row {
         min-width: 0;
         margin: 0;
-        padding-left: @col-space-md;
-        padding-right: @col-space-xs;
+        padding-left: @col-sep-md;
+        padding-right: @col-sep-xs;
         box-sizing: border-box;
-    }
-    [class*='col-md'] {
-        width: auto;
-        float: none;
-        margin: @col-space-xs 0;
-        padding: 0 @col-space-xs 0 0;
-        box-sizing: border-box;
-    }
-    .col-xs {
-        float: left;
-        margin: 0 0 @col-space-xs 0;
-        padding: 0 @col-space-xs 0 0;
-        box-sizing: border-box;
-        &-12 {width: 100%}
-        &-11 {width: 91.66%}
-        &-10 {width: 83.333%}
-        &-9  {width: 75%}
-        &-8  {width: 66.66%}
-        &-7  {width: 58.33%}
-        &-6  {width: 50%}
-        &-5  {width: 41.66%}
-        &-4  {width: 33.33%}
-        &-3  {width: 25%}
-        &-2  {width: 16.667%}
-        &-1  {width: 8.33%}
     }
     .hidden-xs {
         display: none !important;
         width: 0;
         height: 0;
     }
+}
+.col(xs) {
+    @media handheld, only screen and (max-width: 767px) {
+        float: left;
+        margin: 0 0 @col-sep-xs 0;
+        padding: 0 @col-sep-xs 0 0;
+        box-sizing: border-box;
+    }
+}
+.col(md) {
+    float: left;
+    padding-right: @col-sep-md;
+    box-sizing: border-box;
+    @media handheld, only screen and (max-width: 767px) {
+        width: auto;
+        float: none;
+        margin: @col-sep-xs 0;
+        padding: 0 @col-sep-xs 0 0;
+        box-sizing: border-box;
+    }
+}
+.gen-grid(xs);
+.gen-grid(md);
+
+.gen-grid(@suffix) {
+    .gen-common() {
+        .gen-common(1, ~'.col-@{suffix}-1');
+    }
+    .gen-common(@i, @res) when (@i =< @col-num) {
+        @item: ~'.col-@{suffix}-@{i}';
+        .gen-common((@i + 1), ~'@{res}, @{item}');
+    }
+    .gen-common(@i, @res) when (@i > @col-num) {
+        @{res} {
+            .col(@suffix);
+        }
+    }
+
+    .gen-column(@i: 1) when (@i =< @col-num) {
+        .col-@{suffix}-@{i} {
+            width: percentage(@i / @col-num);
+        }
+        .gen-column((@i + 1));
+    }
+
+    .gen-offset(@i: 1) when (@i =< @col-num) {
+        .col-@{suffix}-offset-@{i} {
+            margin-left: percentage(@i / @col-num);
+        }
+        .gen-offset((@i + 1));
+    }
+
+    .gen-common();
+    .gen-column();
+    .gen-offset();
 }
 <% } %>
