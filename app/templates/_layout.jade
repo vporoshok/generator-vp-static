@@ -15,9 +15,9 @@ html
             href='//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.1/normalize.min.css')
         <% } %>
         - if (min)
-            style(rel='stylesheet', type='text/css', href='/style.min.css')
+            link(rel='stylesheet', type='text/css', href='/style.min.css')
         - else
-            style(rel='stylesheet', type='text/css', href='/style.css')
+            link(rel='stylesheet', type='text/css', href='/style.css')
 
     body(lang='en')<% if (bootstrap) { %>
         #bsCDN.hide
