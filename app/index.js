@@ -6,6 +6,13 @@ var yosay = require('yosay');
 var chalk = require('chalk');
 
 
+var isChecked = function (key, list) {
+    for (var i = 0; i < list.length; i++) {
+        if (list[i] === key) return true;
+    }
+    return false;
+}
+
 var VpStaticGenerator = yeoman.generators.Base.extend({
     init: function () {
         this.pkg = require('../package.json');
@@ -33,23 +40,19 @@ var VpStaticGenerator = yeoman.generators.Base.extend({
                 name: 'modules',
                 message: 'What additional modules include?',
                 choices: [
-                    {
-                        name: 'bootstrap',
-                        value: true,
-                        checked: true
-                    }, {
-                        name: 'backbone',
-                        value: true,
-                        checked: false
-                    }
+                    'bootstrap',
+                    'backbone'
+                ],
+                default: [
+                    'bootstrap'
                 ]
             }
         ];
 
         this.prompt(prompts, function (props) {
             this.projectName = props.projectName;
-            this.bootstrap = props.modules[0];
-            this.backbone = props.modules[1];
+            this.bootstrap = isChecked('bootstrap', props.modules);
+            this.backbone = isChecked('backbone', props.modules);
 
             done();
         }.bind(this));

@@ -1,7 +1,10 @@
 var gulp = require('gulp'),
+    gutil = require('gulp-util'),
     jade = require('gulp-jade'),
     less = require('gulp-less'),
+    csso = require('gulp-csso'),
     newer = require('gulp-newer'),
+    base64 = require('gulp-base64'),
     rename = require('gulp-rename'),
     uglify = require('gulp-uglify'),
     requirejs = require('requirejs'),
@@ -28,42 +31,66 @@ var gulp = require('gulp'),
             ]
         }
     },
-    dst = 'dst';
+    dst = 'dst',
+
+    options = {
+        min: false
+    }
+
+gulp.task('set-min', function(cb) {
+    options.min = true;
+    cb();
+});
 
 gulp.task('copy-images', function() {
     return gulp.src('images/*')
         .pipe(newer(dst + '/images'))
+        .on('error', gutil.log)
+        .on('error', gutil.beep)
         .pipe(imagemin({
             progressive: true,
             svgoPlugins: [{removeViewBox: false}]
         }))
+        .on('error', gutil.log)
+        .on('error', gutil.beep)
         .pipe(gulp.dest(dst + '/images'));
 });
 
 gulp.task('copy-vendor-js', function() {
     return gulp.src(src.bower.js)
         .pipe(rename(function(path) {
-            path.basename += '.min'
+            path.basename += '.min';
         }))
+        .on('error', gutil.log)
+        .on('error', gutil.beep)
         .pipe(newer(dst + '/scripts'))
+        .on('error', gutil.log)
+        .on('error', gutil.beep)
         .pipe(uglify())
+        .on('error', gutil.log)
+        .on('error', gutil.beep)
         .pipe(gulp.dest(dst + '/scripts'));
 });
 
 gulp.task('copy-vendor-css', function() {
     return !src.bower.css.length || gulp.src(src.bower.css)
         .pipe(newer(dst))
+        .on('error', gutil.log)
+        .on('error', gutil.beep)
         .pipe(gulp.dest(dst));
 });
 
 gulp.task('js', ['copy-vendor-js'], function() {
     return gulp.src(src.js)
+        .pipe(newer(dst + '/scripts'))
+        .on('error', gutil.log)
+        .on('error', gutil.beep)
         .pipe(gulp.dest(dst + '/scripts'))
         .pipe(connect.reload());
 });
 
-gulp.task('rjs', ['js'], function() {
-    return requirejs.optimize({
+gulp.task('rjs', ['js'], function(cb) {
+    requirejs.optimize({
         baseUrl: dst + '/scripts',
         name: 'script',
         out: dst + '/scripts/script.min.js',
@@ -74,6 +101,7 @@ gulp.task('rjs', ['js'], function() {
             underscore: 'empty:'
         }
     });
+    cb();
 });
 
 gulp.task('jade', function() {
@@ -81,48 +109,41 @@ gulp.task('jade', function() {
         .pipe(jade({
             pretty: true,
             data: {
-                min: false
+                min: options.min
             }
         }))
-        .on('error', console.log)
+        .on('error', gutil.log)
+        .on('error', gutil.beep)
         .pipe(gulp.dest(dst))
         .pipe(connect.reload());
 });
 
-gulp.task('jade-min', function() {
-    return gulp.src(src.jade)
-        .pipe(jade({
-            pretty: true,
-            data: {
-                min: true
-            }
-        }))
-        .on('error', console.log)
-        .pipe(gulp.dest(dst))
-        .pipe(connect.reload());
-});
-
-gulp.task('less', ['copy-vendor-css'], function() {
+gulp.task('less', ['copy-vendor-css', 'copy-images'], function() {
     return gulp.src(src.less)
-        .pipe(less({
-            optimization: 1
-        }))
+        .pipe(less())
+        .on('error', gutil.log)
+        .on('error', gutil.beep)
         .pipe(prefixer('last 2 version', '> 1%', 'ie 8', 'ie 7'))
-        .on('error', console.log)
+        .on('error', gutil.log)
+        .on('error', gutil.beep)
         .pipe(gulp.dest(dst))
         .pipe(connect.reload());
 });
 
-gulp.task('less-min', ['copy-vendor-css'], function() {
-    return gulp.src(src.less)
-        .pipe(less({
-            optimization: 1,
-            compress: true,
-            yuicompress: true
+gulp.task('css-min', ['less'], function() {
+    return gulp.src(dst + '/style.css')
+        .pipe(csso())
+        .on('error', gutil.log)
+        .on('error', gutil.beep)
+        .pipe(base64({
+            baseDir: dst,
+            extensions: ['svg', 'png']
         }))
-        .pipe(prefixer('last 2 version', '> 1%', 'ie 8', 'ie 7'))
+        .on('error', gutil.log)
+        .on('error', gutil.beep)
         .pipe(rename('style.min.css'))
-        .on('error', console.log)
+        .on('error', gutil.log)
+        .on('error', gutil.beep)
         .pipe(gulp.dest(dst))
         .pipe(connect.reload());
 });
@@ -141,7 +162,7 @@ gulp.task('watch', ['server'], function() {
     gulp.watch(src.less_all, ['less']);
 });
 
-gulp.task('devel', ['js', 'jade', 'less', 'copy-images']);
-gulp.task('build', ['rjs', 'jade-min', 'less-min', 'copy-images']);
+gulp.task('devel', ['js', 'jade', 'less']);
+gulp.task('build', ['set-min', 'rjs', 'jade', 'css-min']);
 
 gulp.task('default', ['devel', 'watch']);
