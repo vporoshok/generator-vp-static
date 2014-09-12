@@ -59,20 +59,22 @@ var VpStaticGenerator = yeoman.generators.Base.extend({
     },
 
     app: function () {
-        this.mkdir('src');
-        this.mkdir('images');
+        this.mkdir('layout');
+        this.mkdir('layout/images');
+        this.mkdir(this.projectName)
 
         this.template('_bower.json', 'bower.json');
         this.template('_gulpfile.js', 'gulpfile.js');
-        this.template('_index.jade', 'src/index.jade');
-        this.template('_layout.jade', 'src/layout.jade');
-        this.template('_mixin.less', 'src/mixin.less');
+        this.template('_index.jade', 'layout/index.jade');
+        this.template('_base.jade', 'layout/base/base.jade');
+        this.template('_mixin.less', 'layout/mixin.less');
         this.template('_package.json', 'package.json');
-        this.template('_script.js', 'src/script.js');
-        this.template('_style.less', 'src/style.less');
+        this.template('_script.js', 'layout/script.js');
+        this.template('_style.less', 'layout/style.less');
     },
 
     projectfiles: function () {
+        this.copy('tern-project', '.tern-project');
         this.copy('editorconfig', '.editorconfig');
         this.copy('jshintrc', '.jshintrc');
     }

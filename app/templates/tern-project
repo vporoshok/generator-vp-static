@@ -1,0 +1,7 @@
+{
+  "plugins": {
+    "requirejs": {
+      "baseURL": "./<%= projectName %>/static/scripts"
+    }
+  }
+}

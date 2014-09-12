@@ -1,5 +1,5 @@
 var gulp = require('gulp'),
-    gutil = require('gulp-util'),
+    plumber = require('gulp-plumber'),
     jade = require('gulp-jade'),
     less = require('gulp-less'),
     csso = require('gulp-csso'),
@@ -10,14 +10,16 @@ var gulp = require('gulp'),
     requirejs = require('requirejs'),
     imagemin = require('gulp-imagemin'),
     connect = require('gulp-connect'),
-    prefixer = require('gulp-autoprefixer'),
+    pleeease = require('gulp-pleeease'),
+    sourcemap = require('gulp-sourcemaps'),
+    nunjucks = require('gulp-nunjucks-render'),
 
     src = {
-        js: 'src/**/*.js',
-        jade: 'src/index.jade',
-        jade_all: 'src/**/*.jade',
-        less: 'src/style.less',
-        less_all: 'src/**/*.less',
+        js: 'layout/**/*.js',
+        jade: 'layout/**/*.jade',
+        less: 'layout/style.less',
+        less_all: 'layout/**/*.less',
+        images: 'layout/images/*',
         bower: {
             'js': [
                 'bower_components/jquery/jquery.js',
@@ -31,7 +33,45 @@ var gulp = require('gulp'),
             ]
         }
     },
-    dst = 'dst',
+    dst = '<%= projectName %>',
+    imageminrc = {
+        progressive: true,
+        svgoPlugins: [{removeViewBox: false}]
+    },
+    jaderc = {
+        pretty: true
+    },
+    requirerc = {
+        baseUrl: dst + '/static/scripts',
+        name: 'script',
+        out: dst + '/static/scripts/script.min.js',
+        paths: {
+            jquery: 'empty:',
+            backbone: 'empty:',
+            bootstrap: 'empty:',
+            underscore: 'empty:'
+        }
+    },
+    lessrc = {
+        'strictMath': true,
+        'strictUnits': true
+    },
+    pleeeaserc = {
+        "autoprefixer": {
+            browsers: ["> 5%", "last 2 versions", "Firefox ESR", "Opera 12.1"],
+            cascade: true
+        },
+        "filters": true,
+        "rem": true,
+        "opacity": true,
+        "mqpacker": true,
+        "minifier": false
+    },
+    cssorc = {},
+    base64rc = {
+        baseDir: dst,
+        extensions: ['svg', 'png']
+    },
 
     options = {
         min: false
@@ -43,114 +83,95 @@ gulp.task('set-min', function(cb) {
 });
 
 gulp.task('copy-images', function() {
-    return gulp.src('images/*')
-        .pipe(newer(dst + '/images'))
-        .on('error', gutil.log)
-        .on('error', gutil.beep)
-        .pipe(imagemin({
-            progressive: true,
-            svgoPlugins: [{removeViewBox: false}]
-        }))
-        .on('error', gutil.log)
-        .on('error', gutil.beep)
-        .pipe(gulp.dest(dst + '/images'));
+    return gulp.src(src.images)
+        .pipe(plumber())
+        .pipe(newer(dst + '/static/images'))
+        .pipe(imagemin(imageminrc))
+        .pipe(gulp.dest(dst + '/static/images'));
 });
 
 gulp.task('copy-vendor-js', function() {
     return gulp.src(src.bower.js)
+        .pipe(plumber())
         .pipe(rename(function(path) {
             path.basename += '.min';
         }))
-        .on('error', gutil.log)
-        .on('error', gutil.beep)
-        .pipe(newer(dst + '/scripts'))
-        .on('error', gutil.log)
-        .on('error', gutil.beep)
+        .pipe(newer(dst + '/static/scripts'))
         .pipe(uglify())
-        .on('error', gutil.log)
-        .on('error', gutil.beep)
-        .pipe(gulp.dest(dst + '/scripts'));
+        .pipe(gulp.dest(dst + '/static/scripts'));
 });
 
 gulp.task('copy-vendor-css', function() {
     return !src.bower.css.length || gulp.src(src.bower.css)
+        .pipe(plumber())
         .pipe(newer(dst))
-        .on('error', gutil.log)
-        .on('error', gutil.beep)
-        .pipe(gulp.dest(dst));
+        .pipe(gulp.dest(dst + '/static'));
 });
 
 gulp.task('js', ['copy-vendor-js'], function() {
     return gulp.src(src.js)
-        .pipe(newer(dst + '/scripts'))
-        .on('error', gutil.log)
-        .on('error', gutil.beep)
-        .pipe(gulp.dest(dst + '/scripts'))
+        .pipe(plumber())
+        .pipe(sourcemap.init())
+        .pipe(newer(dst + '/static/scripts'))
+        .pipe(sourcemap.write())
+        .pipe(gulp.dest(dst + '/static/scripts'))
         .pipe(connect.reload());
 });
 
 gulp.task('rjs', ['js'], function(cb) {
-    requirejs.optimize({
-        baseUrl: dst + '/scripts',
-        name: 'script',
-        out: dst + '/scripts/script.min.js',
-        paths: {
-            jquery: 'empty:',
-            backbone: 'empty:',
-            bootstrap: 'empty:',
-            underscore: 'empty:'
-        }
-    });
+    requirejs.optimize(requirerc);
     cb();
 });
 
 gulp.task('jade', function() {
     return gulp.src(src.jade)
-        .pipe(jade({
-            pretty: true,
+        .pipe(plumber())
+        .pipe(jade(Object.create(jaderc, {
             data: {
                 min: options.min
             }
+        })))
+        .pipe(rename(function(path) {
+            path.extname = '.j2html';
         }))
-        .on('error', gutil.log)
-        .on('error', gutil.beep)
+        .pipe(gulp.dest(dst + '/templates'))
+        .pipe(connect.reload());
+});
+
+gulp.task('nunjucks', ['jade'], function() {
+    nunjucks.nunjucks.configure([dst + '/templates'])
+    return gulp.src(dst + '/templates/**/*.j2html')
+        .pipe(plumber())
+        .pipe(nunjucks())
+        .pipe(rename(function(path) {
+            path.extname = '.html';
+        }))
         .pipe(gulp.dest(dst))
         .pipe(connect.reload());
 });
 
 gulp.task('less', ['copy-vendor-css', 'copy-images'], function() {
     return gulp.src(src.less)
-        .pipe(less())
-        .on('error', gutil.log)
-        .on('error', gutil.beep)
-        .pipe(prefixer('last 2 version', '> 1%', 'ie 8', 'ie 7'))
-        .on('error', gutil.log)
-        .on('error', gutil.beep)
-        .pipe(gulp.dest(dst))
+        .pipe(plumber())
+        .pipe(less(lessrc))
+        .pipe(pleeease(pleeeaserc))
+        .pipe(gulp.dest(dst + '/static'))
         .pipe(connect.reload());
 });
 
 gulp.task('css-min', ['less'], function() {
-    return gulp.src(dst + '/style.css')
-        .pipe(csso())
-        .on('error', gutil.log)
-        .on('error', gutil.beep)
-        .pipe(base64({
-            baseDir: dst,
-            extensions: ['svg', 'png']
-        }))
-        .on('error', gutil.log)
-        .on('error', gutil.beep)
+    return gulp.src(dst + '/static/style.css')
+        .pipe(plumber())
+        .pipe(csso(cssorc))
+        .pipe(base64(base64rc))
         .pipe(rename('style.min.css'))
-        .on('error', gutil.log)
-        .on('error', gutil.beep)
-        .pipe(gulp.dest(dst))
+        .pipe(gulp.dest(dst + '/static'))
         .pipe(connect.reload());
 });
 
 gulp.task('server', function() {
     connect.server({
-        root: 'dst',
+        root: dst,
         port: 3000,
         livereload: true
     });
@@ -158,11 +179,11 @@ gulp.task('server', function() {
 
 gulp.task('watch', ['server'], function() {
     gulp.watch(src.js, ['js']);
-    gulp.watch(src.jade_all, ['jade']);
+    gulp.watch(src.jade, ['jade', 'nunjucks']);
     gulp.watch(src.less_all, ['less']);
 });
 
-gulp.task('devel', ['js', 'jade', 'less']);
-gulp.task('build', ['set-min', 'rjs', 'jade', 'css-min']);
+gulp.task('devel', ['js', 'nunjucks', 'less']);
+gulp.task('build', ['set-min', 'rjs', 'nunjucks', 'css-min']);
 
 gulp.task('default', ['devel', 'watch']);

@@ -1,5 +1,4 @@
-extends layout.jade
-block title
-    | <%= projectName %>
-
-block append content
+| {% extends 'base/base.j2html' %}
+| {% block title %}<%= projectName %>{% endblock %}
+| {% block content %}
+| {% endblock %}

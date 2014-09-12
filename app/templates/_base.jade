@@ -2,8 +2,7 @@ doctype html
 html
     head
         meta(charset='utf-8')
-        title
-            block title
+        title {% block title %}{% endblock %}
 
         meta(http-equiv='X-UA-Compatible', content='IE=edge')
         meta(name='viewport' content='width=device-width, initial-scale=1')
@@ -15,9 +14,9 @@ html
             href='//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.1/normalize.min.css')
         <% } %>
         - if (min)
-            link(rel='stylesheet', type='text/css', href='/style.min.css')
+            link(rel='stylesheet', type='text/css', href='/static/style.min.css')
         - else
-            link(rel='stylesheet', type='text/css', href='/style.css')
+            link(rel='stylesheet', type='text/css', href='/static/style.css')
 
     body(lang='en')<% if (bootstrap) { %>
         #bsCDN.hide
@@ -26,19 +25,18 @@ html
                 var bootstrap = document.createElement('link');
                 bootstrap.setAttribute('rel', 'stylesheet');
                 bootstrap.setAttribute('type', 'text/css');
-                bootstrap.setAttribute('href', '/bootstrap.min.css');
+                bootstrap.setAttribute('href', '/static/bootstrap.min.css');
                 var head = document.getElementsByTagName('head')[0];
                 head.insertBefore(bootstrap, head.firstChild);
             }
         <% } %>
-        .content
-            block content
+        .container.content {% block content %}{% endblock %}
 
         - if (min)
             script(type='text/javascript',
-                   src='/scripts/require.min.js',
+                   src='/static/scripts/require.min.js',
                    data-main='/scripts/script.min.js')
         - else
             script(type='text/javascript',
-                   src='/scripts/require.min.js',
+                   src='/static/scripts/require.min.js',
                    data-main='/scripts/script.js')
