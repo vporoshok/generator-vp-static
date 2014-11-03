@@ -208,6 +208,7 @@ gulp.task('server', function() {
 gulp.task('watch', ['server'], function() {
     gulp.watch(src.js, ['js']);
     gulp.watch(src.jade, ['nunjucks']);
+    gulp.watch('./layout/content.json', ['nunjucks']);
     gulp.watch(src.less_all, ['less']);
 });
 
