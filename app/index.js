@@ -40,43 +40,56 @@ var VpStaticGenerator = yeoman.generators.Base.extend({
                 name: 'modules',
                 message: 'What additional modules include?',
                 choices: [
+                    'backbone',
                     'bootstrap',
-                    'backbone'
+                    'font awesome',
+                    'lightbox2',
+                    'underscore',
                 ],
                 default: [
-                    'bootstrap'
                 ]
             }
         ];
 
         this.prompt(prompts, function (props) {
             this.projectName = props.projectName;
-            this.bootstrap = isChecked('bootstrap', props.modules);
             this.backbone = isChecked('backbone', props.modules);
+            this.bootstrap = isChecked('bootstrap', props.modules);
+            this.font_awesome = isChecked('font awesome', props.modules);
+            this.lightbox = isChecked('lightbox2', props.modules);
+            this.underscore = isChecked('underscore', props.modules);
+            this.underscore = this.underscore || this.backbone;
 
             done();
         }.bind(this));
     },
 
     app: function () {
-        this.mkdir('layout');
-        this.mkdir('layout/images');
+        this.mkdir('layout/img');
+        this.mkdir('layout/jade/base')
+        this.mkdir('layout/js')
+        this.mkdir('layout/less')
+        this.mkdir('layout/mockup')
+
+        this.template('layout/jade/base/base.jade', 'layout/jade/base/base.jade');
+        this.template('layout/jade/index.jade', 'layout/jade/index.jade');
+        this.template('layout/js/script.js', 'layout/js/script.js');
+        this.template('layout/less/mixin.less', 'layout/less/mixin.less');
+        this.template('layout/less/style.less', 'layout/less/style.less');
+        this.template('layout/content.json', 'layout/content.json');
+
+        this.template('_editorconfig', '.editorconfig');
+        this.template('_gitignore', '.gitignore');
+        this.template('_jshintrc', '.jshintrc');
+        this.template('_tern-project', '.tern-project');
+
+        this.template('bower.json', 'bower.json');
+        this.template('fabfile.py', 'fabfile.py');
+        this.template('gulpfile.js', 'gulpfile.js');
+        this.template('nginx.conf', 'nginx.conf');
+        this.template('package.json', 'package.json');
+
         this.mkdir(this.projectName)
-
-        this.template('_bower.json', 'bower.json');
-        this.template('_gulpfile.js', 'gulpfile.js');
-        this.template('_index.jade', 'layout/index.jade');
-        this.template('_base.jade', 'layout/base/base.jade');
-        this.template('_mixin.less', 'layout/mixin.less');
-        this.template('_package.json', 'package.json');
-        this.template('_script.js', 'layout/script.js');
-        this.template('_style.less', 'layout/style.less');
-    },
-
-    projectfiles: function () {
-        this.copy('tern-project', '.tern-project');
-        this.copy('editorconfig', '.editorconfig');
-        this.copy('jshintrc', '.jshintrc');
     }
 });
 

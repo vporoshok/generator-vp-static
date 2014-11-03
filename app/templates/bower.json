@@ -1,0 +1,25 @@
+{
+  "name": "<%= _.slugify(projectName) %>",
+  "version": "0.0.0",
+  "moduleType": [
+    "amd"
+  ],
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "jquery": "components/jquery#*",
+    "requirejs": "*",
+    "normalize-css": "*"<% if (lightbox) { %>,
+    "lightbox2": "*"<% } if (backbone) { %>,
+    "backbone": "*"<% } if (underscore) { %>,
+    "underscore": "*"<% } if (bootstrap) { %>,
+    "bootstrap": "*"<% } %>
+  }
+}
+

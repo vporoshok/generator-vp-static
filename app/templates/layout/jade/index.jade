@@ -1,4 +1,4 @@
 | {% extends 'base/base.j2html' %}
-| {% block title %}<%= projectName %>{% endblock %}
+| {% block title %}<%= _.slugify(projectName) %>{% endblock %}
 | {% block content %}
 | {% endblock %}

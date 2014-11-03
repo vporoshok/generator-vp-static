@@ -28,6 +28,6 @@ def install():
 
 
 def deploy():
-    rsync_project(('/srv/www/%s' % name), '<%= projectName %>/')
+    rsync_project(('/srv/www/%s' % name), '<%= _.slugify(projectName) %>/')
 
     note('logcol WUI deployed')
