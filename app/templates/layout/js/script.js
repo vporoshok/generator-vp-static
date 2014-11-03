@@ -15,10 +15,10 @@ require.config({
         backbone: [
             '//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min',
             'backbone.min'
-        ]<% } if (backbone || underscore) { %>,
-        underscore: [
-            '//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min',
-            'underscore.min'
+        ]<% } if (lodash) { %>,
+        lodash: [
+            '//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min',
+            'lodash.min'
         ]<% } %>
     },
     shim: {
@@ -26,7 +26,7 @@ require.config({
             exports: '$'
         }<% if (backbone) { %>,
         backbone: {
-            deps: ['jquery', 'underscore']
+            deps: ['jquery', 'lodash']
         }<% } if (bootstrap) { %>,
         bootstrap: {
             deps: ['jquery']
@@ -34,6 +34,9 @@ require.config({
         lightbox: {
             deps: ['jquery'],
             exports: 'jQuery.fn.lightbox'
+        }<% } if (lodash) { %>,
+        lodash: {
+            exports: '_'
         }<% } %>
     }
 });
@@ -42,8 +45,9 @@ require.config({
 
 require([
     'jquery',
+    'lodash',
     'modernizr'
-], function($, modernizr) {
+], function($, _, modernizr) {
         'use strict';
 
 });

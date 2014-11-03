@@ -15,11 +15,12 @@
   "devDependencies": {
     "jquery": "components/jquery#*",
     "requirejs": "*",
-    "normalize-css": "*"<% if (lightbox) { %>,
-    "lightbox2": "*"<% } if (backbone) { %>,
-    "backbone": "*"<% } if (underscore) { %>,
-    "underscore": "*"<% } if (bootstrap) { %>,
-    "bootstrap": "*"<% } %>
+    "normalize-css": "*"<% if (backbone) { %>,
+    "backbone": "*"<% } if (bootstrap) { %>,
+    "bootstrap": "*"<% } if (font_awesome) { %>,
+    "components-font-awesome": "*"<% } if (lightbox) { %>,
+    "lightbox2": "*"<% } if (lodash) { %>,
+    "lodash": "*"<% } %>
   }
 }
 

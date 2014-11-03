@@ -44,9 +44,11 @@ var VpStaticGenerator = yeoman.generators.Base.extend({
                     'bootstrap',
                     'font awesome',
                     'lightbox2',
-                    'underscore',
+                    'lodash',
                 ],
                 default: [
+                    'font awesome',
+                    'lodash'
                 ]
             }
         ];
@@ -57,8 +59,8 @@ var VpStaticGenerator = yeoman.generators.Base.extend({
             this.bootstrap = isChecked('bootstrap', props.modules);
             this.font_awesome = isChecked('font awesome', props.modules);
             this.lightbox = isChecked('lightbox2', props.modules);
-            this.underscore = isChecked('underscore', props.modules);
-            this.underscore = this.underscore || this.backbone;
+            this.lodash = isChecked('lodash', props.modules);
+            this.lodash = this.lodash || this.backbone;
 
             done();
         }.bind(this));

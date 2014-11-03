@@ -28,19 +28,21 @@ var fs = require('fs'),
                 'bower_components/requirejs/require.js'<% if (backbone) { %>,
                 'bower_components/backbone/backbone.js'<% } if (bootstrap) { %>,
                 'bower_components/bootstrap/dist/js/bootstrap.js'<% } if (lightbox) { %>,
-                'bower_components/lightbox2/js/lightbox.js'<% } if (backbone || underscore) { %>,
-                'bower_components/underscore/underscore.js'<% } %>
+                'bower_components/lightbox2/js/lightbox.js'<% } if (lodash) { %>,
+                'bower_components/lodash/lodash.js'<% } %>
             ],
             css: [
                 'bower_components/normalize-css/normalize.css'<% if (bootstrap) { %>,
-                'bower_components/bootstrap/dist/css/bootstrap.css'<% } if (lightbox) { %>,
+                'bower_components/bootstrap/dist/css/bootstrap.css'<% } if (font_awesome) { %>,
+                'bower_components/components-font-awesome/css/font-awesome.css'<% } if (lightbox) { %>,
                 'bower_components/lightbox2/css/lightbox.css'<% } %>
             ],
             img: [<% if (lightbox) { %>
                 'bower_components/lightbox2/img/*'<% } %>
             ],
             fonts: [<% if (bootstrap) { %>
-                'bower_components/bootstrap/dist/fonts/*'<% } %>
+                'bower_components/bootstrap/dist/fonts/*'<% } if (font_awesome) { %>
+                'bower_components/components-font-awesome/fonts/*'<% } %>
             ]
         }
     },
