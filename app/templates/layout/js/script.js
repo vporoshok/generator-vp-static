@@ -14,7 +14,7 @@ require.config({
             '//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min',
             'lodash/dist/lodash'
         ]<% } %>,
-        URI: 'uri.js/src'
+        URI: 'uri.js/src',
 
         modernizr: '../js/modernizr'
     },
@@ -28,17 +28,6 @@ require.config({
         lodash: {
             exports: '_'
         }<% } %>
-    }
-});
-    },
-    shim: {
-        jquery: {
-            exports: '$'
-    },
-    map: {
-        backbone: {
-            underscore: 'lodash'
-        }
     }
 });
 

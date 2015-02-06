@@ -18,7 +18,7 @@
     "uri.js": "*",
     "normalize-css": "*"<% if (backbone) { %>,
     "backbone": "*"<% } if (font_awesome) { %>,
-    "components-font-awesome": "*"<% } if (lodash) { %>,
+    "font-awesome": "*"<% } if (lodash) { %>,
     "lodash": "*"<% } %>
   }
 }
