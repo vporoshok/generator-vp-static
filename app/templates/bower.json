@@ -15,11 +15,10 @@
   "devDependencies": {
     "jquery": "components/jquery#*",
     "requirejs": "*",
+    "uri.js": "*",
     "normalize-css": "*"<% if (backbone) { %>,
-    "backbone": "*"<% } if (bootstrap) { %>,
-    "bootstrap": "*"<% } if (font_awesome) { %>,
-    "components-font-awesome": "*"<% } if (lightbox) { %>,
-    "lightbox2": "*"<% } if (lodash) { %>,
+    "backbone": "*"<% } if (font_awesome) { %>,
+    "components-font-awesome": "*"<% } if (lodash) { %>,
     "lodash": "*"<% } %>
   }
 }

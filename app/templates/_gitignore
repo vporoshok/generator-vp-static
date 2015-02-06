@@ -3,11 +3,10 @@
 *.sublime-*
 
 # Bower and npm
-/bower_components
 /node_modules
 
 # Results
-/<%= _.slugify(projectName) %>
+/frontend
 
 # Python
 *.py[cod]

@@ -41,9 +41,7 @@ var VpStaticGenerator = yeoman.generators.Base.extend({
                 message: 'What additional modules include?',
                 choices: [
                     'backbone',
-                    'bootstrap',
                     'font awesome',
-                    'lightbox2',
                     'lodash',
                 ],
                 default: [
@@ -56,11 +54,8 @@ var VpStaticGenerator = yeoman.generators.Base.extend({
         this.prompt(prompts, function (props) {
             this.projectName = props.projectName;
             this.backbone = isChecked('backbone', props.modules);
-            this.bootstrap = isChecked('bootstrap', props.modules);
             this.font_awesome = isChecked('font awesome', props.modules);
-            this.lightbox = isChecked('lightbox2', props.modules);
-            this.lodash = isChecked('lodash', props.modules);
-            this.lodash = this.lodash || this.backbone;
+            this.lodash = isChecked('lodash', props.modules) || this.backbone;
 
             done();
         }.bind(this));
@@ -76,10 +71,13 @@ var VpStaticGenerator = yeoman.generators.Base.extend({
         this.template('layout/jade/base/base.jade', 'layout/jade/base/base.jade');
         this.template('layout/jade/index.jade', 'layout/jade/index.jade');
         this.template('layout/js/script.js', 'layout/js/script.js');
+        this.template('layout/js/modernizr.js', 'layout/js/modernizr.js');
+        this.template('layout/less/const.less', 'layout/less/const.less');
         this.template('layout/less/mixin.less', 'layout/less/mixin.less');
         this.template('layout/less/style.less', 'layout/less/style.less');
         this.template('layout/content.json', 'layout/content.json');
 
+        this.template('_bowerrc', '.bowerrc');
         this.template('_editorconfig', '.editorconfig');
         this.template('_gitignore', '.gitignore');
         this.template('_jshintrc', '.jshintrc');
@@ -90,8 +88,6 @@ var VpStaticGenerator = yeoman.generators.Base.extend({
         this.template('gulpfile.js', 'gulpfile.js');
         this.template('nginx.conf', 'nginx.conf');
         this.template('package.json', 'package.json');
-
-        this.mkdir(this.projectName)
     }
 });
 

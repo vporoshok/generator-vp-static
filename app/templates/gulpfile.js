@@ -21,35 +21,12 @@ var fs = require('fs'),
         jade: 'layout/jade/**/*.jade',
         less: 'layout/less/style.less',
         less_all: 'layout/less/**/*.less',
-        images: 'layout/img/*',
-        bower: {
-            js: [
-                'bower_components/jquery/jquery.js',
-                'bower_components/requirejs/require.js'<% if (backbone) { %>,
-                'bower_components/backbone/backbone.js'<% } if (bootstrap) { %>,
-                'bower_components/bootstrap/dist/js/bootstrap.js'<% } if (lightbox) { %>,
-                'bower_components/lightbox2/js/lightbox.js'<% } if (lodash) { %>,
-                'bower_components/lodash/lodash.js'<% } %>
-            ],
-            css: [
-                'bower_components/normalize-css/normalize.css'<% if (bootstrap) { %>,
-                'bower_components/bootstrap/dist/css/bootstrap.css'<% } if (font_awesome) { %>,
-                'bower_components/components-font-awesome/css/font-awesome.css'<% } if (lightbox) { %>,
-                'bower_components/lightbox2/css/lightbox.css'<% } %>
-            ],
-            img: [<% if (lightbox) { %>
-                'bower_components/lightbox2/img/*'<% } %>
-            ],
-            fonts: [<% if (bootstrap) { %>
-                'bower_components/bootstrap/dist/fonts/*'<% } if (font_awesome) { %>
-                'bower_components/components-font-awesome/fonts/*'<% } %>
-            ]
-        }
+        img: 'layout/img/*'
     },
-    dst = '<%= _.slugify(projectName) %>',
+    dst = 'frontend',
     imageminrc = {
         progressive: true,
-        svgoPlugins: [{removeViewBox: false}]
+        svgoPlugins: []
     },
     jaderc = {
         pretty: true,
@@ -58,20 +35,20 @@ var fs = require('fs'),
         }
     },
     requirerc = {
-        baseUrl: dst + '/static/js',
-        name: 'script',
+        baseUrl: dst + '/static/vendor/',
+        name: '../js/script',
         out: dst + '/static/js/script.min.js',
         mainConfigFile: dst + '/static/js/script.js',
         paths: {
             jquery: 'empty:',
             backbone: 'empty:',
             bootstrap: 'empty:',
-            underscore: 'empty:',
-            lightbox: 'empty:'
+            lodash: 'empty:'
         }
     },
     lessrc = {
-        'strictUnits': true
+        'strictUnits': false,
+        'strictMath': false
     },
     pleeeaserc = {
         autoprefixer: {
@@ -82,7 +59,7 @@ var fs = require('fs'),
             path: dst + '/static/css'
         },
         filters: true,
-        rem: true,
+        rem: ['16px', {'replace': true}],
         opacity: true,
         mqpacker: true,
         minifier: false
@@ -97,47 +74,15 @@ gulp.task('set-min', function(cb) {
     cb();
 });
 
-gulp.task('copy-vendor-js', function() {
-    return gulp.src(src.bower.js)
-        .pipe(plumber())
-        .pipe(rename(function(path) {
-            path.basename += '.min'
-        }))
-        .pipe(newer(dst + '/static/js'))
-        .pipe(uglify())
-        .pipe(gulp.dest(dst + '/static/js'));
-});
-
-gulp.task('copy-vendor-img', function() {
-    return !src.bower.img.length || gulp.src(src.bower.img)
-        .pipe(plumber())
-        .pipe(newer(dst + '/static/img'))
-        .pipe(gulp.dest(dst + '/static/img'));
-});
-
-gulp.task('copy-vendor-fonts', function() {
-    return !src.bower.fonts.length || gulp.src(src.bower.fonts)
-        .pipe(plumber())
-        .pipe(newer(dst + '/static/fonts'))
-        .pipe(gulp.dest(dst + '/static/fonts'));
-});
-
-gulp.task('copy-vendor-css', ['copy-vendor-img', 'copy-vendor-fonts'], function() {
-    return !src.bower.css.length || gulp.src(src.bower.css)
-        .pipe(plumber())
-        .pipe(newer(dst + '/static/css'))
-        .pipe(gulp.dest(dst + '/static/css'));
-});
-
-gulp.task('copy-images', ['copy-vendor-img'], function() {
-    return gulp.src(src.images)
+gulp.task('copy-images', function() {
+    return gulp.src(src.img)
         .pipe(plumber())
         .pipe(newer(dst + '/static/img'))
         .pipe(imagemin(imageminrc))
         .pipe(gulp.dest(dst + '/static/img'));
 });
 
-gulp.task('js', ['copy-vendor-js'], function() {
+gulp.task('js', function() {
     return gulp.src(src.js)
         .pipe(plumber())
         .pipe(sourcemap.init())
@@ -178,7 +123,7 @@ gulp.task('nunjucks', ['jade'], function() {
         .pipe(connect.reload());
 });
 
-gulp.task('less', ['copy-vendor-css', 'copy-images'], function() {
+gulp.task('less', ['copy-images'], function() {
     return gulp.src(src.less)
         .pipe(plumber())
         .pipe(less(lessrc))
@@ -210,6 +155,7 @@ gulp.task('watch', ['server'], function() {
     gulp.watch(src.jade, ['nunjucks']);
     gulp.watch('./layout/content.json', ['nunjucks']);
     gulp.watch(src.less_all, ['less']);
+    gulp.watch(src.img, ['copy-images']);
 });
 
 gulp.task('devel', ['js', 'nunjucks', 'less']);

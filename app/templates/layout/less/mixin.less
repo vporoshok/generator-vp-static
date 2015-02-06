@@ -1,22 +1,30 @@
-@img: ~'/static/img/';
-@min-width: 755px;
-@max-width: 1140px;
+.clearfix {
+    overflow: hidden;
+    &:before, &:after {
+        content: '';
+        display: table;
+        clear: both;
+    }
+}
 
-@col-num: 12;
-@col-sep-md: 20px;
-@col-sep-xs: 10px;
-
+.text-shadow(@shift, @bluring, @color) {
+    text-shadow: 0       0      @bluring @color,
+                 0      -@shift @bluring @color,
+                 @shift -@shift @bluring @color,
+                 @shift  0      @bluring @color,
+                 @shift  @shift @bluring @color,
+                 0       @shift @bluring @color,
+                -@shift  @shift @bluring @color,
+                -@shift  0      @bluring @color,
+                -@shift -@shift @bluring @color;
+}
+tomorrow
 .row {
     width: 100%;
     min-width: @min-width;
     max-width: @max-width;
     margin: 0 auto;
-    overflow: hidden;
-    &:after {
-        content: '';
-        display: table;
-        clear: both;
-    }
+    .clearfix();
 }
 @media handheld, only screen and (max-width: 767px) {
     .row {
@@ -52,10 +60,8 @@
         box-sizing: border-box;
     }
 }
-.gen-grid(xs);
-.gen-grid(md);
 
-.gen-grid(@suffix) {
+.gen-grid(@suffix, @col-num) {
     .gen-common() {
         .gen-common(1, ~'.col-@{suffix}-1');
     }

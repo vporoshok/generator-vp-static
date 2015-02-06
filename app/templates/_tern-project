@@ -1,7 +1,7 @@
 {
   "plugins": {
     "requirejs": {
-      "baseURL": "./<%= _.slugify(projectName) %>/static/js"
+      "baseURL": "./frontend/static/js"
     }
   }
 }
