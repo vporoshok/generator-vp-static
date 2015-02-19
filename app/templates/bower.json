@@ -14,7 +14,7 @@
     "requirejs": "*",
     "normalize-css": "*",
     "html5shiv": "*",
-    "webshim": "*",<% if (backbone) { %>,
+    "webshim": "*"<% if (backbone) { %>,
     "backbone": "*"<% } if (font_awesome) { %>,
     "font-awesome": "*"<% } if (lodash) { %>,
     "lodash": "*"<% } %>

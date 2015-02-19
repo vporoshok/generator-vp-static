@@ -4,20 +4,20 @@
   "dependencies": {},
   "devDependencies": {
     "gulp": "*",
+    "gulp-babel": "*",
     "gulp-base64": "*",
-    "gulp-concat": "*",
     "gulp-connect": "*",
     "gulp-csso": "*",
     "gulp-imagemin": "*",
     "gulp-jade": "*",
     "gulp-less": "*",
+    "gulp-merge": "*",
     "gulp-newer": "*",
     "gulp-nunjucks-render": "*",
     "gulp-pleeease": "*",
     "gulp-plumber": "*",
     "gulp-rename": "*",
     "gulp-sourcemaps": "*",
-    "gulp-uglify": "*",
     "markdown": "*",
     "requirejs": "*"
   }
