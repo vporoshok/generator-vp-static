@@ -8,5 +8,10 @@
 # Results
 /frontend
 
+# Vagrant
+/.vagrant
+/data
+/www
+
 # Python
 *.py[cod]

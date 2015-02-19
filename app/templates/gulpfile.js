@@ -1,23 +1,29 @@
 var fs = require('fs'),
     gulp = require('gulp'),
-    plumber = require('gulp-plumber'),
-    jade = require('gulp-jade'),
-    less = require('gulp-less'),
-    csso = require('gulp-csso'),
+    merge = require('gulp-merge'),
     newer = require('gulp-newer'),
-    concat = require('gulp-concat'),
-    base64 = require('gulp-base64'),
     rename = require('gulp-rename'),
-    uglify = require('gulp-uglify'),
-    requirejs = require('requirejs'),
-    imagemin = require('gulp-imagemin'),
+    plumber = require('gulp-plumber'),
     connect = require('gulp-connect'),
-    pleeease = require('gulp-pleeease'),
     sourcemap = require('gulp-sourcemaps'),
+
+    jade = require('gulp-jade'),
     nunjucks = require('gulp-nunjucks-render'),
 
+    less = require('gulp-less'),
+    csso = require('gulp-csso'),
+    pleeease = require('gulp-pleeease'),
+
+    base64 = require('gulp-base64'),
+    imagemin = require('gulp-imagemin'),
+
+    babel = require('gulp-babel'),
+    requirejs = require('requirejs'),
+
     src = {
-        js: 'layout/js/*.js',
+        js: 'layout/js/[^_]*.js',
+        js_fragile: 'layout/js/_*.js',
+        js_all: 'layout/js/*.js',
         jade: 'layout/jade/**/*.jade',
         less: 'layout/less/style.less',
         less_all: 'layout/less/**/*.less',
@@ -34,16 +40,21 @@ var fs = require('fs'),
             min: false
         }
     },
+    babelrc = {
+        modules: 'amd'
+    },
     requirerc = {
-        baseUrl: dst + '/static/vendor/',
-        name: '../js/script',
+        baseUrl: dst + '/static/js/',
+        name: './script',
         out: dst + '/static/js/script.min.js',
-        mainConfigFile: dst + '/static/js/script.js',
+        mainConfigFile: dst + '/static/js/_config.js',
+        optimize: 'none',
         paths: {
             jquery: 'empty:',
             backbone: 'empty:',
             bootstrap: 'empty:',
-            lodash: 'empty:'
+            lodash: 'empty:',
+            webshim: 'empty:'
         }
     },
     lessrc = {
@@ -52,7 +63,13 @@ var fs = require('fs'),
     },
     pleeeaserc = {
         autoprefixer: {
-            browsers: ['> 5%', 'last 2 versions', 'Firefox ESR', 'Opera 12.1'],
+            browsers: [
+                '> 5%',
+                'last 2 versions',
+                'Firefox ESR',
+                'Opera 12.1',
+                'ie >= 8'
+            ],
             cascade: true
         },
         import: {
@@ -83,11 +100,14 @@ gulp.task('copy-images', function() {
 });
 
 gulp.task('js', function() {
-    return gulp.src(src.js)
-        .pipe(plumber())
-        .pipe(sourcemap.init())
-        .pipe(newer(dst + '/static/js'))
-        .pipe(sourcemap.write())
+    return merge(
+            gulp.src(src.js)
+                .pipe(plumber())
+                .pipe(sourcemap.init())
+                .pipe(newer(dst + '/static/js'))
+                .pipe(babel(babelrc))
+                .pipe(sourcemap.write()),
+            gulp.src(src.js_fragile))
         .pipe(gulp.dest(dst + '/static/js'))
         .pipe(connect.reload());
 });
@@ -151,7 +171,7 @@ gulp.task('server', function() {
 });
 
 gulp.task('watch', ['server'], function() {
-    gulp.watch(src.js, ['js']);
+    gulp.watch(src.js_all, ['js']);
     gulp.watch(src.jade, ['nunjucks']);
     gulp.watch('./layout/content.json', ['nunjucks']);
     gulp.watch(src.less_all, ['less']);

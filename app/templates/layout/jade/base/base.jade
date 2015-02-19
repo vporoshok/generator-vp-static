@@ -9,10 +9,14 @@ html.no-js<!--<![endif]-->
         title {% block title %}{% endblock %}
         meta(http-equiv='X-UA-Compatible', content='IE=edge,chrome=1')
         meta(name='viewport' content='width=device-width, initial-scale=1.0')
+        <!--[if lt IE 9]>
+        script(src="/static/vendor/html5shiv/dist/html5shiv.js")
+        <![endif]-->
+        script windows.page_data = {};
         - if (min)
-            link(rel='stylesheet', type='text/css', href='/static/css/style.min.css')
+            link(rel='stylesheet', href='/static/css/style.min.css')
         - else
-            link(rel='stylesheet', type='text/css', href='/static/css/style.css')
+            link(rel='stylesheet', href='/static/css/style.css')
 
     body
         <!--[if lt IE 7]>
@@ -29,11 +33,10 @@ html.no-js<!--<![endif]-->
             footer.row
 
 
-        - if (min)
-            script(type='text/javascript',
-                   src='/static/vendor/requirejs/require.js',
-                   data-main='/static/js/script.min.js')
-        - else
-            script(type='text/javascript',
-                   src='/static/vendor/requirejs/require.js',
-                   data-main='/static/js/script.js')
+        script(src='/static/vendor/requirejs/require.js')
+        script
+            | {% include '../static/js/_config.js' %}
+            - if (min)
+            | require(['script.min']);
+            - else
+            | require(['script'])

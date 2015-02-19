@@ -71,7 +71,8 @@ var VpStaticGenerator = yeoman.generators.Base.extend({
         this.template('layout/jade/base/base.jade', 'layout/jade/base/base.jade');
         this.template('layout/jade/index.jade', 'layout/jade/index.jade');
         this.template('layout/js/script.js', 'layout/js/script.js');
-        this.template('layout/js/modernizr.js', 'layout/js/modernizr.js');
+        this.template('layout/js/_config.js', 'layout/js/_config.js');
+        this.template('layout/js/_modernizr.js', 'layout/js/_modernizr.js');
         this.template('layout/less/const.less', 'layout/less/const.less');
         this.template('layout/less/mixin.less', 'layout/less/mixin.less');
         this.template('layout/less/style.less', 'layout/less/style.less');
@@ -85,6 +86,7 @@ var VpStaticGenerator = yeoman.generators.Base.extend({
 
         this.template('bower.json', 'bower.json');
         this.template('fabfile.py', 'fabfile.py');
+        this.template('fabconf.json', 'fabconf.json');
         this.template('gulpfile.js', 'gulpfile.js');
         this.template('nginx.conf', 'nginx.conf');
         this.template('package.json', 'package.json');

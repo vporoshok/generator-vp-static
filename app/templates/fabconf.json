@@ -1,0 +1,19 @@
+{
+    "name": "<%= _.slugify(projectName) %>",
+    "roles": {
+        "rpi": {
+            "hosts": "home.vprshk.ru:10322"
+        },
+        "ftp": {
+            "hosts": [],
+            "user": "ftpuser",
+            "passwd": "ftppass",
+            "root": "/",
+            "files": [{
+                "src": "./frontend/static",
+                "dst": "static"
+            }]
+        }
+    }
+}
+

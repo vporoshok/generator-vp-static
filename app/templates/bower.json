@@ -7,16 +7,14 @@
   "private": true,
   "ignore": [
     "**/.*",
-    "node_modules",
-    "bower_components",
-    "test",
-    "tests"
+    "node_modules"
   ],
   "devDependencies": {
-    "jquery": "components/jquery#*",
+    "jquery": "components/jquery#^1.0.0",
     "requirejs": "*",
-    "uri.js": "*",
-    "normalize-css": "*"<% if (backbone) { %>,
+    "normalize-css": "*",
+    "html5shiv": "*",
+    "webshim": "*",<% if (backbone) { %>,
     "backbone": "*"<% } if (font_awesome) { %>,
     "font-awesome": "*"<% } if (lodash) { %>,
     "lodash": "*"<% } %>
